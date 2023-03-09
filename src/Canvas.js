@@ -161,13 +161,13 @@ class Canvas extends Component {
               {/* Words */}
               <Words selectMode={this.state.selectMode} />
 
-              <Figure selectMode={this.state.selectMode} />
+              {/*<Figure selectMode={this.state.selectMode} />*/}
               {/* Drawing Line */}
               <DrawingLine ref={this.drawingLineRef} />
 
               <Equation />
 
-              <StepByStep />
+              <StepByStep selectMode={this.state.selectMode} />
             </Layer>
           </Stage>
         </div>

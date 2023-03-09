@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import mathsteps from "mathsteps";
-import { Text } from "react-konva";
+//import { Text } from "react-konva";
+import Steps from "./Steps.js";
 
 /**
  * Step by Step component
  */
-function StepByStep() {
+function StepByStep(props) {
   const [ocr, setOcr] = useState([]);
   const [equationBoxes, setEquationBoxes] = useState([]);
   const [equations, setEquations] = useState([]);
+  const { selectMode } = props;
 
   // Get the OCR and Equation box results on dom mount
   useEffect(() => {
@@ -89,7 +91,19 @@ function StepByStep() {
           ocrXmax < equationXmax + 5
         ) {
           // Before we add the string, we need to proccess it a bit by removing commas
-          const new_symbol = symbol.description.replace(/\,/g, "");
+          let new_symbol = symbol.description.replace(/\,/g, "");
+
+          new_symbol = symbol.description.replace(
+            /[⁰¹²³⁴⁵⁶⁷⁸⁹]/g,
+            (superChar) => {
+              var result = "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(superChar);
+              if (result > -1) {
+                return `^${result}`;
+              } else {
+                return superChar;
+              }
+            }
+          );
           equationString += new_symbol;
         }
       });
@@ -97,28 +111,47 @@ function StepByStep() {
       // Now that we have the string, we can perform the math steps on the string.
       let equation_obj = {};
       equation_obj.bbox = bbox;
-      equation_obj.steps = [];
+      equation_obj.solveSteps = [];
       equation_obj.equation = equationString;
 
-      const steps = mathsteps.solveEquation(equationString);
-      steps.forEach((step) => {
-        equation_obj.steps.push({
+      // We can either calculate the solve and simplify steps before hand for each equation or
+      // let the user decide which one to do and caluclate it then (we are doing first option right now)
+      /*
+      const solveSteps = mathsteps.solveEquation(equationString);
+      solveSteps.forEach((step) => {
+        equation_obj.solveSteps.push({
           before_change: step.oldEquation.ascii(),
           change: step.changeType,
           after_change: step.newEquation.ascii(),
           num_substeps: step.substeps.length,
         });
       });
-
-      equations.push(equation_obj);
+      */
+      // Factor
+      const solveSteps = mathsteps.factor(equationString);
+      solveSteps.forEach((step) => {
+        equation_obj.solveSteps.push({
+          before_change: step.oldNode.toString(),
+          change: step.changeType,
+          after_change: step.newNode.toString(),
+          substeps: step.substeps,
+        });
+      });
+      if (equation_obj.solveSteps.length > 0) {
+        equations.push(equation_obj);
+      }
     });
-
     setEquations(equations);
   }
 
   return (
     <>
-      <Text text={"NISHAN SONI"} x={500} y={500} />
+      {ocr.length > 0 &&
+      equationBoxes.length > 0 &&
+      equations.length > 0 &&
+      selectMode === false ? (
+        <Steps equation_obj={equations[0]} />
+      ) : null}
     </>
   );
 }
