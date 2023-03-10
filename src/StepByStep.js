@@ -131,16 +131,56 @@ function StepByStep(props) {
       const solveSteps = mathsteps.factor(equationString);
       solveSteps.forEach((step) => {
         equation_obj.solveSteps.push({
-          before_change: step.oldNode.toString(),
-          change: step.changeType,
-          after_change: step.newNode.toString(),
+          beforeChange: step.oldNode.toString(),
+          changeType: step.changeType,
+          afterChange: step.newNode.toString(),
           substeps: step.substeps,
         });
       });
       if (equation_obj.solveSteps.length > 0) {
         equations.push(equation_obj);
       }
+      equation_obj.solveSteps.push({
+        beforeChange: "x",
+        changeType: "NISHAN CHANGE",
+        afterChange: "x",
+        substeps: [
+          {
+            beforeChange: "x",
+            changeType: "NISHAN CHANGE",
+            afterChange: "x",
+            substeps: [],
+          },
+          {
+            beforeChange: "x",
+            changeType: "NISHAN CHANGE",
+            afterChange: "x",
+            substeps: [],
+          },
+        ],
+      });
+
+      equation_obj.solveSteps.push({
+        beforeChange: "x",
+        changeType: "NISHAN CHANGE TWO",
+        afterChange: "x",
+        substeps: [
+          {
+            beforeChange: "x",
+            changeType: "NISHAN CHANGE",
+            afterChange: "x",
+            substeps: [],
+          },
+          {
+            beforeChange: "x",
+            changeType: "NISHAN CHANGE",
+            afterChange: "x",
+            substeps: [],
+          },
+        ],
+      });
     });
+
     setEquations(equations);
   }
 
@@ -149,9 +189,11 @@ function StepByStep(props) {
       {ocr.length > 0 &&
       equationBoxes.length > 0 &&
       equations.length > 0 &&
-      selectMode === false ? (
-        <Steps equation_obj={equations[0]} />
-      ) : null}
+      selectMode === false
+        ? equations.map((equation) => {
+            return <Steps equation_obj={equation} />;
+          })
+        : null}
     </>
   );
 }
