@@ -1,27 +1,25 @@
 import { useState } from "react";
-import { Group, Rect, Circle, Text } from "react-konva";
+import { Group, Rect, Text } from "react-konva";
 
 function Steps(props) {
-  const { equation_obj } = props;
+  const { equation_obj, stepsVisible, setStepsVisible } = props;
   const { bbox, solveSteps } = equation_obj;
-  const [visible, setVisible] = useState(false);
 
   // Defining dimensions for the steps box
   // X axis
-  const size = App.size / 3;
-  const minX = bbox[0][0] - 65;
+  const size = App.size / 1.5;
+  const minX = App.size / 6;
   const maxX = minX + size;
   const centerX = (minX + maxX) / 2;
 
   // Y axis
-  const minY = bbox[0][1];
+  const minY = App.size / 5;
   const maxY = minY + size;
   const centerY = (minY + maxY) / 2;
 
   // Other
   const marginX = 20;
   const marginY = 20;
-  const increment = 10;
   const top = minY + marginY; // This will be incremented as the lines will render
   const bottom = maxY - marginY;
   const left = minX + marginX;
@@ -32,24 +30,13 @@ function Steps(props) {
   let spaceBetweenSubSteps = 0;
 
   return (
-    <Group width={size} height={size}>
-      {visible == false ? (
-        /** This is a clickable rectangle that opens the step by step solution */
-        <Rect
-          x={bbox[0][0]}
-          y={minY}
-          width={bbox[2][0] - bbox[0][0]}
-          height={bbox[2][1] - bbox[0][1]}
-          transparent={true}
-          onClick={() => {
-            setVisible(true);
-          }}
-        />
-      ) : (
+    <Group>
+      {stepsVisible ? (
         /** This is the rectangle for the step by step solution */
         <>
           <Rect
-            x={minX}
+            x={centerX}
+            offsetX={size / 2}
             y={minY}
             width={size}
             height={size}
@@ -72,13 +59,13 @@ function Steps(props) {
             fontStyle="bold"
             fill={App.highlightColor}
             onClick={() => {
-              setVisible(false);
+              setStepsVisible(false);
             }}
           />
           {/* Loop through the steps */}
           {solveSteps.map((step, index) => {
             spaceBetweenSteps += spaceBetweenSubSteps;
-            spaceBetweenSubSteps = 30 + step.substeps.length * 30;
+            spaceBetweenSubSteps = step.substeps.length * 30;
             return (
               // The Step
               <>
@@ -99,10 +86,10 @@ function Steps(props) {
                       <Text
                         text={`substep: ${subStepIndex + 1}: ${
                           substep.changeType
-                        }`}
+                        }\n\n After change: ${substep.newNode.toTex()}`}
                         fontSize={16}
                         x={left}
-                        y={top + spaceBetweenSteps + (subStepIndex + 1) * 30}
+                        y={top + spaceBetweenSteps + (subStepIndex + 1) * 60}
                       />
                     );
                   })}
@@ -113,7 +100,7 @@ function Steps(props) {
             );
           })}
         </>
-      )}
+      ) : null}
     </Group>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import mathsteps from "mathsteps";
-//import { Text } from "react-konva";
 import Steps from "./Steps.js";
+import { Rect } from "react-konva";
 
 /**
  * Step by Step component
@@ -10,6 +10,8 @@ function StepByStep(props) {
   const [ocr, setOcr] = useState([]);
   const [equationBoxes, setEquationBoxes] = useState([]);
   const [equations, setEquations] = useState([]);
+  const [stepsVisible, setStepsVisible] = useState(false);
+  const [selectedEquation, setSelectedEquation] = useState();
   const { selectMode } = props;
 
   // Get the OCR and Equation box results on dom mount
@@ -140,6 +142,7 @@ function StepByStep(props) {
       if (equation_obj.solveSteps.length > 0) {
         equations.push(equation_obj);
       }
+      /*
       equation_obj.solveSteps.push({
         beforeChange: "x",
         changeType: "NISHAN CHANGE",
@@ -148,13 +151,13 @@ function StepByStep(props) {
           {
             beforeChange: "x",
             changeType: "NISHAN CHANGE",
-            afterChange: "x",
+            newNode: "x",
             substeps: [],
           },
           {
             beforeChange: "x",
             changeType: "NISHAN CHANGE",
-            afterChange: "x",
+            newNode: "x",
             substeps: [],
           },
         ],
@@ -168,24 +171,59 @@ function StepByStep(props) {
           {
             beforeChange: "x",
             changeType: "NISHAN CHANGE",
-            afterChange: "x",
+            newNode: "x",
             substeps: [],
           },
           {
             beforeChange: "x",
             changeType: "NISHAN CHANGE",
-            afterChange: "x",
+            newNode: "x",
             substeps: [],
           },
         ],
       });
+      */
     });
 
     setEquations(equations);
   }
 
-  return (
-    <>
+  if (!selectMode && equations.length > 0) {
+    return (
+      <>
+        {stepsVisible && selectedEquation !== undefined ? (
+          <Steps
+            equation_obj={selectedEquation}
+            stepsVisible={stepsVisible}
+            setStepsVisible={setStepsVisible}
+          />
+        ) : (
+          equations.map((equation, index) => {
+            const { bbox } = equation;
+            return (
+              <Rect
+                x={bbox[0][0]}
+                y={bbox[0][1]}
+                width={bbox[2][0] - bbox[0][0]}
+                height={bbox[2][1] - bbox[0][1]}
+                transparent={true}
+                onClick={() => {
+                  setStepsVisible(true);
+                  setSelectedEquation(equation);
+                }}
+                key={index}
+              />
+            );
+          })
+        )}
+        <></>
+      </>
+    );
+  }
+  return null;
+}
+
+/* 
       {ocr.length > 0 &&
       equationBoxes.length > 0 &&
       equations.length > 0 &&
@@ -193,9 +231,5 @@ function StepByStep(props) {
         ? equations.map((equation) => {
             return <Steps equation_obj={equation} />;
           })
-        : null}
-    </>
-  );
-}
-
+        : null}*/
 export default StepByStep;
