@@ -142,6 +142,7 @@ function StepByStep(props) {
       if (equation_obj.solveSteps.length > 0) {
         equations.push(equation_obj);
       }
+
       /*
       equation_obj.solveSteps.push({
         beforeChange: "x",
@@ -162,7 +163,9 @@ function StepByStep(props) {
           },
         ],
       });
+      */
 
+      /*
       equation_obj.solveSteps.push({
         beforeChange: "x",
         changeType: "NISHAN CHANGE TWO",

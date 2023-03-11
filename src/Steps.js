@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Group, Rect, Text } from "react-konva";
+import { Group, Rect, Text, Line } from "react-konva";
 
 function Steps(props) {
   const { equation_obj, stepsVisible, setStepsVisible } = props;
-  const { bbox, solveSteps } = equation_obj;
+  const { solveSteps } = equation_obj;
 
   // Defining dimensions for the steps box
   // X axis
@@ -29,6 +28,33 @@ function Steps(props) {
   let spaceBetweenText = 0;
   let spaceBetweenSubSteps = 0;
 
+  const substepFontSize = 22;
+  const stepFontSize = 22;
+
+  const stepByStepTop = top + 50;
+
+  //const gheight = afterChangeOffset + 50;
+  //let currentHeight = stepByStepTop - gheight;
+
+  const step_by_step_margins = 15; // THE MARGINS BETWEEN EVERY ITEM IN STEP BY STEP
+
+  //LINE OFFSET
+  const lineOffset = stepFontSize + step_by_step_margins;
+
+  // GROUP THAT CONTAINS STEP INFO
+  const stepInfoYOffset = lineOffset + step_by_step_margins;
+  const stepInfoXOffset = 30;
+
+  const subStepYOffset = stepInfoYOffset + step_by_step_margins;
+  const subStepXOffset = 15;
+  const subStepChangeTypeOffset = subStepYOffset + step_by_step_margins;
+  const substepAfterChangeOffset =
+    subStepChangeTypeOffset + step_by_step_margins * 2;
+
+  const subStepHeight = subStepChangeTypeOffset;
+  let allSubStepsHeight = (subStepHeight * solveSteps[0].substeps.length) / 2;
+  let stepHeight = lineOffset + stepInfoYOffset + allSubStepsHeight; // adding every offset from line offset to this variable
+
   return (
     <Group>
       {stepsVisible ? (
@@ -40,17 +66,12 @@ function Steps(props) {
             y={minY}
             width={size}
             height={size}
-            fill="rgba(255,255,255,0.95)"
+            fill="rgba(255,255,255,1)"
             stroke="#777"
             strokeWidth={1}
+            cornerRadius={8}
           />
-          <Text
-            text="Step by Step Solution."
-            x={left}
-            y={top}
-            fontSize={20}
-            fontStyle="bold"
-          />
+          <Text text="Solution." x={left} y={top} fontSize={30} />
           <Text
             text="X"
             x={right - 20}
@@ -62,43 +83,58 @@ function Steps(props) {
               setStepsVisible(false);
             }}
           />
-          {/* Loop through the steps */}
-          {solveSteps.map((step, index) => {
-            spaceBetweenSteps += spaceBetweenSubSteps;
-            spaceBetweenSubSteps = step.substeps.length * 30;
-            return (
-              // The Step
-              <>
-                {/* The step number */}
-                <Group>
+          <Group x={left} y={stepByStepTop}>
+            {solveSteps.map((step, index) => {
+              stepHeight = lineOffset + stepInfoYOffset + allSubStepsHeight;
+              allSubStepsHeight = 0;
+              return (
+                <Group y={stepHeight * index} key={index}>
                   <Text
-                    text={`Step ${index + 1}: ${step.changeType}`}
-                    fontSize={18}
-                    x={left}
-                    y={top + spaceBetweenSteps}
+                    text={step.changeType}
+                    fontSize={stepFontSize}
+                    fill={App.highlightColor}
                   />
-                </Group>
-                {/* The substeps */}
-                <Group>
-                  {/* Loop through each substep */}
-                  {step.substeps.map((substep, subStepIndex) => {
-                    return (
-                      <Text
-                        text={`substep: ${subStepIndex + 1}: ${
-                          substep.changeType
-                        }\n\n After change: ${substep.newNode.toTex()}`}
-                        fontSize={16}
-                        x={left}
-                        y={top + spaceBetweenSteps + (subStepIndex + 1) * 60}
-                      />
-                    );
-                  })}
+                  <Line
+                    points={[0, 0, right - left, 0]}
+                    stroke="#777"
+                    strokeWidth={0.5}
+                    y={lineOffset}
+                  ></Line>
+                  {/* Step Info */}
 
-                  {/* Loop through the substeps of each step */}
+                  <Group x={stepInfoXOffset}>
+                    {step.substeps.length > 0
+                      ? step.substeps.map((substep, subStepIndex) => {
+                          allSubStepsHeight += subStepHeight;
+                          return (
+                            <Group
+                              y={subStepHeight * subStepIndex}
+                              key={(index + 1) * subStepIndex * 1000}
+                            >
+                              <Text
+                                y={subStepChangeTypeOffset}
+                                text={substep.changeType}
+                                fontSize={stepFontSize}
+                                fill={App.highlightColor}
+                              />
+
+                              <Text
+                                y={substepAfterChangeOffset}
+                                text={substep.newNode.toString()}
+                                fontSize={stepFontSize}
+                                fill="black"
+                              ></Text>
+                            </Group>
+                          );
+                        })
+                      : null}
+                  </Group>
                 </Group>
-              </>
-            );
-          })}
+              );
+            })}
+          </Group>
+
+          {/* Loop through the steps */}
         </>
       ) : null}
     </Group>
