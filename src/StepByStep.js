@@ -130,12 +130,12 @@ function StepByStep(props) {
       });
       */
       // Factor
-      const solveSteps = mathsteps.factor(equationString);
+      const solveSteps = mathsteps.solveEquation(equationString);
       solveSteps.forEach((step) => {
         equation_obj.solveSteps.push({
-          beforeChange: step.oldNode.toString(),
+          beforeChange: step.oldEquation.ascii(),
           changeType: step.changeType,
-          afterChange: step.newNode.toString(),
+          afterChange: step.newEquation.ascii(),
           substeps: step.substeps,
         });
       });

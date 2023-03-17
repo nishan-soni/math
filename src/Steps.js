@@ -100,7 +100,7 @@ function Steps(props) {
                     strokeWidth={0.5}
                     y={lineOffset}
                   ></Line>
-                  {/* Step Info */}
+                  {/* Step Info 
 
                   <Group x={stepInfoXOffset}>
                     {step.substeps.length > 0
@@ -117,10 +117,9 @@ function Steps(props) {
                                 fontSize={stepFontSize}
                                 fill={App.highlightColor}
                               />
-
                               <Text
                                 y={substepAfterChangeOffset}
-                                text={substep.newNode.toString()}
+                                text={substep.newEquation.ascii()}
                                 fontSize={stepFontSize}
                                 fill="black"
                               ></Text>
@@ -129,6 +128,13 @@ function Steps(props) {
                         })
                       : null}
                   </Group>
+                  */}
+                  <Text
+                    y={stepInfoXOffset + step_by_step_margins}
+                    text={step.afterChange}
+                    fontSize={stepFontSize}
+                    fill="black"
+                  ></Text>
                 </Group>
               );
             })}
