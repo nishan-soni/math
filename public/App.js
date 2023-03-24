@@ -16,7 +16,7 @@ class App extends Component {
     window.app = this;
     window.App = this;
 
-    this.sampleId = 12;
+    this.sampleId = 10;
 
     if (window.location.href.includes("localhost")) {
       this.socket = io("http://localhost:4000");
