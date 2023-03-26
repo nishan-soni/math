@@ -167,13 +167,6 @@ class Canvas extends Component {
               {/* Drawing Line */}
               <DrawingLine ref={this.drawingLineRef} />
 
-              {/*
-<Distance
-                updateSymbols={this.updateSymbols}
-                currentSymbols={this.state.currentSymbols}
-              />
-*/}
-
               <Triangle
                 onTriangleChange={this.updateSymbols}
                 currentSymbols={this.state.currentSymbols}
